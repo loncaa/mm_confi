@@ -3,9 +3,18 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var {connectRoutes} = require('./src/controllers/routes')
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const session = require('express-session')
+
+const mongooseConfig = require('./src/config/db-config')
+const mongoose = require('mongoose')
+
+mongoose.connect(mongooseConfig.url, { useCreateIndex: true, useNewUrlParser: true });
+mongoose.connection.on("error", err => {
+    console.error("MongoDB connection error: " + err);
+    process.exit(-1);
+});
 
 var app = express();
 
@@ -19,8 +28,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+//setup session
+app.use(session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: false
+}))
+
+connectRoutes('/app', app)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
