@@ -34,11 +34,4 @@ const AttendeeSchema = new Schema({
         strict: false
     })
 
-//Update attendee code after save
-AttendeeSchema.post('save', async function(doc, next){
-    doc.code = `C${doc.bookingId}${doc._id}`
-    await doc.save()
-    next()
-})
-
 module.exports = mongoose.model("Attendee", AttendeeSchema)

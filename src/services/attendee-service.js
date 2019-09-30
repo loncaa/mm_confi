@@ -1,5 +1,4 @@
 const Attendee = require('../db/models/Attendee')
-const Booking = require('../db/models/Booking')
 
 function addAttendee(bookingId, firstname, lastname, email, phone, code){
 
@@ -23,8 +22,13 @@ function listAttendees(bookingId){
     return Attendee.find({bookingId: bookingId})
 }
 
+function setAttendeeCode(attendeeId, code){
+    return Attendee.update({_id: attendeeId}, {$set: {code: code}})
+}
+
 module.exports = {
     addAttendee,
     removeAttendee,
-    listAttendees
+    listAttendees,
+    setAttendeeCode
 }
