@@ -1,5 +1,5 @@
 const User = require('../db/models/User')
-const Booking = require('../db/models/Attendee')
+const Booking = require('../db/models/Booking')
 
 function createBooking(userId, title, time) {
 
