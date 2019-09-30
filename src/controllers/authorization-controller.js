@@ -11,8 +11,14 @@ const mapping = 'auth'
 /* GET users listing. */
 router.post(`/${mapping}/login`, function(req, res, next) {
 
+    const email = req.body.email
+    const password = req.body.password
+
+    if(!email || !password)
+        return res.status(300).json({ok: false, message: 'Required params not found'})
+
     //check username/password
-    UserService.authenticate(req.body.email, req.body.password)
+    UserService.authenticate(email, password)
         .then(user => {
 
             req.session.userId = user._id
@@ -27,17 +33,17 @@ router.post(`/${mapping}/login`, function(req, res, next) {
 
 router.post(`/${mapping}/logout`, function(req, res, next) {
 
-    if (req.session) {
+    if(!req.session)
+        return res.status(300).json({ok: false, message: 'Required params not found'})
 
-        // delete session object
-        req.session.destroy(function (err) {
-            if (err) {
-                res.status(400).json({ok: false, message: `Logout failed! ${err.message}`});
-            } else {
-                res.status(200).json({ok: true, user: req.user})
-            }
-        });
-    }
+    // delete session object
+    req.session.destroy(function (err) {
+        if (err) {
+            res.status(400).json({ok: false, message: `Logout failed! ${err.message}`});
+        } else {
+            res.status(200).json({ok: true, user: req.user})
+        }
+    });
 });
 
 module.exports = router;

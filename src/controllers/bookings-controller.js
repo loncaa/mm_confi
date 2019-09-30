@@ -52,9 +52,12 @@ router.delete(`/${mapping}/:bookingId`, function(req, res) {
     const userId = req.session.userId
     const bookingId = req.params.bookingId
 
+    if(!userId || !bookingId)
+        return res.status(300).json({ok: false, message: 'Required params not found'})
+
     BookingService.deleteBooking(userId, bookingId)
-        .then(isDeleted => {
-            res.status(200).json({ok: true, isDeleted: isDeleted})
+        .then(booking => {
+            res.status(200).json({ok: true, deleted: !!(booking), booking: booking})
         })
         .catch(error => {
             res.status(300).json({ok: false, message: `Failed to delete bookings! ${error.message}`});
@@ -67,6 +70,9 @@ router.delete(`/${mapping}/:bookingId`, function(req, res) {
 //fetch list of attendees for booking
 router.get(`/${mapping}/:bookingId/attendees`, function(req, res){
     const bookingId = req.params.bookingId
+
+    if(!bookingId)
+        return res.status(300).json({ok: false, message: 'Required params not found'})
 
     AttendeeService.listAttendees(bookingId)
         .then(attendees => {
@@ -93,10 +99,20 @@ router.put(`/${mapping}/:bookingId/attendee`, function (req, res) {
     AttendeeService.addAttendee(bookingId, firstname, lastname, email, phone)
         .then(attendee => {
 
-            //send email to attendee
-            NodeMailerService.sendMail(email, attendee.code)
+            const code = `C${bookingId}${attendee._id}`
 
-            res.status(200).json({ok: true, attendee: attendee})
+            //send email to attendee
+            //NodeMailerService.sendMail(email, code)
+
+            return AttendeeService.setAttendeeCode(attendee._id, code)
+                .then(updated => {
+
+                    if(updated.ok){
+                        attendee.code = code
+                    }
+
+                    res.status(200).json({ok: true, attendee: attendee})
+                })
         })
         .catch(error => {
             res.status(300).json({ok: false, message: `Failed to add attendee! ${error.message}`});
@@ -109,9 +125,12 @@ router.delete(`/${mapping}/:bookingId/attendee/:id`, function (req, res) {
     const bookingId = req.params.bookingId
     const attendeeId = req.params.id
 
+    if(!bookingId || !attendeeId)
+        return res.status(300).json({ok: false, message: 'Required params not found'})
+
     AttendeeService.removeAttendee(bookingId, attendeeId)
-        .then(isDeleted => {
-            res.status(200).json({ok: true, isDeleted: isDeleted})
+        .then(attendee => {
+            res.status(200).json({ok: true, isDeleted: !!(attendee), attendee: attendee})
         })
         .catch(error => {
             res.status(300).json({ok: false, message: `Failed to delete attendee! ${error.message}`});
