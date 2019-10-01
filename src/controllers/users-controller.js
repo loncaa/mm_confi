@@ -15,7 +15,7 @@ router.post(`/${mapping}/signin`, function(req, res, next) {
     if(!email || !password)
         return res.status(300).json({ok: false, message: 'Required params not found'})
 
-    UserService.create(email, password, isAdmin)
+    UserService.createUser(email, password, isAdmin)
         .then(user => {
 
             return res.status(200).json({ok: true, user: user})

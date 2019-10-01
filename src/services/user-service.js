@@ -5,7 +5,7 @@ function authenticate(email, password) {
     return User.authenticate(email, password)
 }
 
-function create(email, password, isAdmin = false){
+function createUser(email, password, isAdmin = false){
 
     if(!ValidatorHelper.validateEmail(email))
         return Promise.reject({message: 'Email is not valid'})
@@ -23,8 +23,13 @@ function findById(id) {
     return User.findById(id).select("-password")
 }
 
+function deleteUser(userId){
+    return User.findOneAndRemove({_id: userId})
+}
+
 module.exports = {
+    deleteUser,
     authenticate,
-    create,
+    createUser,
     findById
 }

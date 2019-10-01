@@ -47,9 +47,9 @@ UserSchema.statics.authenticate  = function(email, password) {
 
             if(!user) return Promise.reject({message: 'User doesent exists'})
 
+
             return user.comparePassword(password)
                 .then(isMatch => {
-
                     if(!isMatch) return Promise.reject({message: 'Email or Password not correct.'})
 
                     return Promise.resolve(user)
