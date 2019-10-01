@@ -1,3 +1,5 @@
+require('./test-helper')
+
 const assert = require('assert')
 const UserService = require('../src/services/user-service')
 
@@ -8,15 +10,16 @@ const isUserAdmin = true
 let userObj
 
 function assertHelper(user) {
+    assert(user)
     assert(user.email === userEmail)
-    assert(user.comparePassword(userPassword))
+    //assert(user.comparePassword(userPassword))
     assert(user.isAdmin === isUserAdmin)
 }
 
-describe('Creating document', done => {
+describe('User mocha test', () => {
     it('creates a user', done => {
 
-        UserService.create(userEmail, userPassword, isUserAdmin)
+        UserService.createUser(userEmail, userPassword, isUserAdmin)
             .then(user => {
 
                 assertHelper(user)
@@ -24,28 +27,32 @@ describe('Creating document', done => {
                 done()
             })
     })
-})
 
-describe('Fetch document', done => {
     it('finds a user', done => {
 
         UserService.findById(userObj._id)
+            .then(user => {
+                assertHelper(user)
+                done()
+            })
+    })
+
+    it('authenicate a user', done => {
+
+        UserService.authenticate(userObj.email, userPassword)
             .then(user => {
 
                 assertHelper(user)
                 done()
             })
     })
-})
 
-describe('Check document', done => {
-    it('authenicate a user', done => {
+    it('delete user', done => {
 
-        UserService.authenticate(userObj.email, userObj.password)
+        UserService.deleteUser(userObj._id)
             .then(user => {
 
-                assertHelper(user)
-
+                assert(!!(user))
                 done()
             })
     })
