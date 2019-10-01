@@ -1,6 +1,5 @@
 const unless = require('express-unless')
 var jwt = require('jsonwebtoken');
-var exjwt = require('express-jwt')
 const jwtConfig = require('../config/jwt-config')
 
 function check(req, res, next){
