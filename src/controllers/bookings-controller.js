@@ -57,7 +57,7 @@ router.delete(`/${mapping}/:bookingId`, function(req, res) {
 
     BookingService.deleteBooking(userId, bookingId)
         .then(booking => {
-            res.status(200).json({ok: true, deleted: !!(booking), booking: booking})
+            res.status(200).json({ok: true, isDeleted: !!(booking), booking: booking})
         })
         .catch(error => {
             res.status(300).json({ok: false, message: `Failed to delete bookings! ${error.message}`});
