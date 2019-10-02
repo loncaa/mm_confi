@@ -6,7 +6,7 @@ const UserService = require('../services/user-service')
 const mapping = 'user'
 
 //create user
-router.post(`/${mapping}/signin`, function(req, res, next) {
+router.post(`/${mapping}`, function(req, res, next) {
 
     const email = req.body.email
     const password = req.body.password
@@ -26,9 +26,9 @@ router.post(`/${mapping}/signin`, function(req, res, next) {
 });
 
 //GET user data by id
-router.get(`/${mapping}/:id`, function(req, res, next) {
+router.get(`/${mapping}`, function(req, res, next) {
 
-    const userId = req.params.id
+    const userId = req.session.userId
 
     if(!userId)
         return res.status(300).json({ok: false, message: 'Required params not found'})
@@ -36,6 +36,22 @@ router.get(`/${mapping}/:id`, function(req, res, next) {
     UserService.findById(userId)
         .then(user => {
             res.status(200).json({ok: true, user: user})
+        })
+        .catch(error => {
+            res.status(400).json({ok: false, message: `${error.message}`})
+        })
+});
+
+router.delete(`/${mapping}`, function(req, res, next) {
+
+    const userId = req.session.userId
+
+    if(!userId)
+        return res.status(300).json({ok: false, message: 'Required params not found'})
+
+    UserService.deleteUser(userId)
+        .then(user => {
+            res.status(200).json({ok: true, isDeleted: !!(user), user: user})
         })
         .catch(error => {
             res.status(400).json({ok: false, message: `${error.message}`})
