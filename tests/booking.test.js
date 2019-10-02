@@ -20,18 +20,25 @@ before(done => {
        })
 })
 
+function assertHelper(booking) {
+    assert(booking)
+    assert(booking.title === bookingTitle)
+    assert(booking.userId.toString() === userObj._id.toString())
+}
+
 describe('Booking mocha test', () => {
     it('creates a booking', done => {
 
         BookingService.createBooking(userObj._id, bookingTitle, bookingTime)
             .then(booking => {
 
-                assert(booking.title === bookingTitle)
-                assert(booking.userId === userObj._id)
-                //assert(booking.time === bookingTime)
-
+                assertHelper(booking)
                 bookingObj = booking;
 
+                done()
+            })
+            .catch(error => {
+                console.log(error.message)
                 done()
             })
     })
@@ -43,17 +50,27 @@ describe('Booking mocha test', () => {
 
                 assert(Array.isArray(bookings))
                 assert(bookings.length === 1)
+                assertHelper(bookings[0])
 
+                done()
+            })
+            .catch(error => {
+                console.log(error.message)
                 done()
             })
     })
 
     it('deletes a booking', done => {
 
-        BookingService.deleteBooking(userObj._id, bookingObj._id)
-            .then(response => {
-                assert(!!(response))
+        BookingService.deleteBooking(bookingObj._id)
+            .then(booking => {
+
+                assert(!!(booking))
                 done();
+            })
+            .catch(error => {
+                console.log(error.message)
+                done()
             })
     })
 })

@@ -12,7 +12,6 @@ let userObj
 function assertHelper(user) {
     assert(user)
     assert(user.email === userEmail)
-    //assert(user.comparePassword(userPassword))
     assert(user.isAdmin === isUserAdmin)
 }
 
@@ -23,7 +22,13 @@ describe('User mocha test', () => {
             .then(user => {
 
                 assertHelper(user)
+                assert(user.comparePassword(userPassword))
+
                 userObj = user
+                done()
+            })
+            .catch(error => {
+                console.log(error.message)
                 done()
             })
     })
@@ -33,6 +38,10 @@ describe('User mocha test', () => {
         UserService.findById(userObj._id)
             .then(user => {
                 assertHelper(user)
+                done()
+            })
+            .catch(error => {
+                console.log(error.message)
                 done()
             })
     })
@@ -45,6 +54,10 @@ describe('User mocha test', () => {
                 assertHelper(user)
                 done()
             })
+            .catch(error => {
+                console.log(error.message)
+                done()
+            })
     })
 
     it('delete user', done => {
@@ -53,6 +66,10 @@ describe('User mocha test', () => {
             .then(user => {
 
                 assert(!!(user))
+                done()
+            })
+            .catch(error => {
+                console.log(error.message)
                 done()
             })
     })

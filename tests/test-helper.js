@@ -10,12 +10,23 @@ mongoose.connection
         process.exit(-1);
     });
 
+
+function dropWithPromise(collection){
+    return new Promise((resolve, reject) => {
+        console.log(`Drop collection ${collection}`)
+        mongoose.connection.collections[collection].drop(() => {resolve(collection)})
+    })
+}
 //Execute collections drop
 before((done) => {
+    const promises = []
     for(const collection in mongoose.connection.collections){
-        mongoose.connection.collections[collection].drop(() => {})
+        promises.push(dropWithPromise(collection))
     }
 
-    console.log('Collections dropped')
-    done()
+    Promise.all(promises)
+        .then((response) => {
+            console.log('Collections dropped: ' + JSON.stringify(response))
+            done()
+        })
 });
