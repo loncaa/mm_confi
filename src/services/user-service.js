@@ -1,6 +1,8 @@
 const User = require('../db/models/User')
 const ValidatorHelper = require('../helpers/validator-helper')
 
+const BookingService = require('./booking-service')
+
 function authenticate(email, password) {
     return User.authenticate(email, password)
 }
@@ -24,7 +26,10 @@ function findById(id) {
 }
 
 function deleteUser(userId){
-    return User.findOneAndRemove({_id: userId})
+    return BookingService.deleteAllUserBookings(userId)
+        .then(response => {
+            return User.findOneAndDelete({_id: userId})
+        })
 }
 
 module.exports = {
