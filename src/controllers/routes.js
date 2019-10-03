@@ -6,17 +6,17 @@ var attendeesController = require('./attendees-controller')
 const jwtConfig = require('../config/jwt-config')
 const jwtCheckMiddleware = require('../middleware/jwt-check-middleware')
 
-function connectRoutes(path, app) {
+function exposeAppRoutes(pathPrefix, app) {
 
     //Check jwt token middleware
     app.use(jwtCheckMiddleware().unless({path: jwtConfig.jwtIgnoreUrls}))
 
-    app.use(path, authorizationController)
-    app.use(path, usersController)
-    app.use(path, bookingsController)
-    app.use(path, attendeesController)
+    app.use(pathPrefix, authorizationController)
+    app.use(pathPrefix, usersController)
+    app.use(pathPrefix, bookingsController)
+    app.use(pathPrefix, attendeesController)
 }
 
 module.exports = {
-    connectRoutes
+    exposeAppRoutes
 }

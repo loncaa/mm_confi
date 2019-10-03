@@ -5,7 +5,6 @@ const UserService = require('../services/user-service')
 
 const mapping = 'user'
 
-//create user
 router.post(`/${mapping}`, function(req, res, next) {
 
     const email = req.body.email

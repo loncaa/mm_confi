@@ -8,7 +8,6 @@ const UserService = require('../services/user-service')
 
 const mapping = 'auth'
 
-/* GET users listing. */
 router.post(`/${mapping}/login`, function(req, res, next) {
 
     const email = req.body.email
