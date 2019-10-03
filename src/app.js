@@ -3,11 +3,12 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var {connectRoutes} = require('./src/controllers/routes')
+var {exposeAppRoutes} = require('./controllers/routes')
+var {setupSwaggerDocumentation} = require('./swagger/swaggerUiGenerator')
 
 const session = require('express-session')
 
-const mongooseConfig = require('./src/config/db-config')
+const mongooseConfig = require('./config/db-config')
 const mongoose = require('mongoose')
 
 mongoose.connect(mongooseConfig.url, { useCreateIndex: true, useNewUrlParser: true });
@@ -17,10 +18,6 @@ mongoose.connection.on("error", err => {
 });
 
 var app = express();
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -35,7 +32,9 @@ app.use(session({
     saveUninitialized: false
 }))
 
-connectRoutes('/app', app)
+setupSwaggerDocumentation(app)
+
+exposeAppRoutes('/app', app)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
