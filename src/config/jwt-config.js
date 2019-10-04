@@ -1,6 +1,6 @@
 const jwtConfig = {
     secret: 'secret',
-    jwtIgnoreUrls: ['/app/auth/login', '/app/user']
+    jwtIgnoreUrls: ['/app/user/login', '/app/user']
 }
 
 module.exports = jwtConfig
